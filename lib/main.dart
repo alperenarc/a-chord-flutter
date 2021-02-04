@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_fft/flutter_fft.dart';
 import 'package:getx_sample/ui/note_screen/note_screen.dart';
@@ -27,7 +29,7 @@ class ApplicationState extends State<Application> {
   bool isRecording;
 
   FlutterFft flutterFft = new FlutterFft();
-
+  var timer;
   @override
   void initState() {
     isRecording = flutterFft.getIsRecording;
@@ -85,7 +87,17 @@ class ApplicationState extends State<Application> {
     print("starting...");
     await flutterFft.startRecorder();
     setState(() => isRecording = flutterFft.getIsRecording);
-    flutterFft.onRecorderStateChanged.listen(
+
+    flutterFft.onRecorderStateChanged.transform(
+      StreamTransformer.fromHandlers(handleData: (data, sink) {
+        if (timer == null) {
+          sink.add(data);
+          timer = Timer(Duration(milliseconds: 100), () {
+            timer = null;
+          });
+        }
+      }),
+    ).listen(
       (data) => {
         setState(
           () => {
