@@ -1,3 +1,6 @@
+import 'dart:collection';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getx_sample/ui/note_screen/note_screen_controller.dart';
@@ -5,8 +8,42 @@ import 'package:neon/neon.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class NoteScreen extends StatelessWidget {
+  var notes = {
+    164.81: 'E3',
+    174.61: 'F3',
+    185.00: 'F#3',
+    196.00: 'G3',
+    207.65: 'G#3',
+    220.00: 'A3',
+    233.08: 'A#3',
+    246.94: 'B3',
+    261.63: 'C4',
+    277.18: 'C#4',
+    293.66: 'D4',
+    311.13: 'D#4',
+    329.63: 'E4',
+    349.23: 'F4',
+  };
+  filter(double myVar, SplayTreeMap<double, String> values) {
+    if (values.containsKey(myVar)) {
+      return {myVar: values[myVar]};
+    }
+
+    double lowerKey = values.lastKeyBefore(myVar);
+    double upperKey = values.firstKeyAfter(myVar);
+    return {
+      if (lowerKey != null) lowerKey: values[lowerKey],
+      if (upperKey != null) upperKey: values[upperKey],
+    };
+  }
+
+  void operationHere() {
+    inspect(filter(312, notes));
+  }
+
   @override
   Widget build(BuildContext context) {
+    operationHere();
     return Scaffold(
       backgroundColor: Color(0xff2d2c34),
       body: SafeArea(
